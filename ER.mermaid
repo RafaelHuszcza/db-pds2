@@ -1,0 +1,45 @@
+erDiagram
+    User ||--o{ Shelter : "responsibleForShelters"
+    User }o--o{ Shelter : "volunteerAtShelters"
+    Shelter ||--o{ Item : "has"
+    Shelter ||--o{ Sheltered : "houses"
+
+    User {
+        string id PK
+        string name
+        string email
+        string password
+        string phone
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Shelter {
+        string id PK
+        string name
+        string address
+        int capacity
+        string responsibleId FK
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Item {
+        string id PK
+        string description
+        int quantity
+        string category
+        string shelterId FK
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Sheltered {
+        string id PK
+        string name
+        int age
+        datetime entryDate
+        string shelterId FK
+        datetime createdAt
+        datetime updatedAt
+    }

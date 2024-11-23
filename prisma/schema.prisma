@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  phone    String
+
+  responsibleForShelters Shelter[] @relation("ShelterResponsible")
+  volunteerAtShelters    Shelter[] @relation("ShelterVolunteer")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Shelter {
+  id       String @id @default(uuid())
+  name     String
+  address  String
+  capacity Int
+
+  responsibleId String @map("responsible_id")
+  responsible   User   @relation("ShelterResponsible", fields: [responsibleId], references: [id])
+
+  volunteers User[]      @relation("ShelterVolunteer")
+  items      Item[]
+  sheltered  Sheltered[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("shelters")
+}
+
+model Item {
+  id          String   @id @default(uuid())
+  description String
+  quantity    Int
+  category    String
+  shelterId   String   @map("shelter_id")
+  shelter     Shelter  @relation(fields: [shelterId], references: [id])
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("items")
+}
+
+model Sheltered {
+  id        String   @id @default(uuid())
+  name      String
+  age       Int
+  entryDate DateTime @map("entry_date")
+  shelterId String   @map("shelter_id")
+  shelter   Shelter  @relation(fields: [shelterId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("sheltered")
+}
